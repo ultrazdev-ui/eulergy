@@ -123,6 +123,18 @@ body {
     flex-direction: column;
     gap: 5px;
     cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(30, 90, 142, 0.15);
+    border: 2px solid rgba(100, 181, 246, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+.menu-toggle:hover {
+    background: rgba(30, 90, 142, 0.25);
+    border-color: var(--purple-glow);
+    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
 }
 
 .menu-toggle span {
@@ -130,6 +142,7 @@ body {
     height: 3px;
     background: var(--text-light);
     transition: all 0.3s ease;
+    border-radius: 2px;
 }
 
 /* Hero Section */
@@ -658,6 +671,34 @@ body {
     box-shadow: 0 8px 20px rgba(0, 212, 255, 0.5);
 }
 
+/* Development Note Styling */
+.development-note {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: #ffffff !important;
+    font-size: 12px !important;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin: 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+    animation: pulse-glow 2s ease-in-out infinite;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 6px 25px rgba(255, 107, 53, 0.7);
+        transform: scale(1.05);
+    }
+}
+
 
 
 /* Footer */
@@ -838,6 +879,16 @@ body {
 }
 
 /* Menu Toggle Active State */
+.menu-toggle.active {
+    background: rgba(30, 90, 142, 0.3);
+    border-color: var(--purple-glow);
+    box-shadow: 0 8px 20px rgba(0, 212, 255, 0.4);
+}
+
+.menu-toggle.active span {
+    background: var(--purple-glow);
+}
+
 .menu-toggle.active span:nth-child(1) {
     transform: rotate(45deg) translate(5px, 5px);
 }
@@ -880,16 +931,89 @@ body {
     
     .nav-links.active {
         display: flex !important;
-        position: absolute;
-        top: 70px;
+        position: fixed;
+        top: 80px;
         right: 20px;
+        left: 20px;
         flex-direction: column;
-        background: rgba(0, 26, 51, 0.98);
-        padding: 20px;
-        border-radius: 10px;
-        gap: 20px;
-        box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
-        border: 1px solid rgba(33, 150, 243, 0.3);
+        background: rgba(0, 26, 51, 0.95);
+        backdrop-filter: blur(15px);
+        padding: 25px 20px;
+        border-radius: 15px;
+        gap: 15px;
+        box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4);
+        border: 2px solid rgba(100, 181, 246, 0.4);
+        z-index: 999;
+        animation: slideDown 0.3s ease;
+        max-width: calc(100vw - 40px);
+        width: auto;
+    }
+    
+    .nav-links.active a {
+        padding: 12px 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        color: var(--text-light);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .nav-links.active a::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .nav-links.active a:hover::before {
+        left: 100%;
+    }
+    
+    .nav-links.active a:hover {
+        background: rgba(30, 90, 142, 0.3);
+        border: 1px solid rgba(100, 181, 246, 0.5);
+        transform: translateX(5px);
+        color: var(--purple-glow);
+        box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Overlay para cerrar menú móvil */
+    .mobile-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 26, 51, 0.8);
+        backdrop-filter: blur(5px);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-menu-overlay.active {
+        opacity: 1;
+        visibility: visible;
     }
 }
 

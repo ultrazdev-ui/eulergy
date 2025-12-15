@@ -202,25 +202,54 @@ document.querySelectorAll('.objective-item, .vision-text, .mission-intro').forEa
     observer.observe(el);
 });
 
-// Menu toggle para móvil - Mejorado con clases CSS
+// Menu toggle para móvil - Mejorado con overlay
 const menuToggle = document.getElementById('menuToggle');
 const navLinks = document.getElementById('navLinks');
 
+// Crear overlay para menú móvil
+const mobileOverlay = document.createElement('div');
+mobileOverlay.className = 'mobile-menu-overlay';
+document.body.appendChild(mobileOverlay);
+
 if (menuToggle && navLinks) {
-    menuToggle.addEventListener('click', () => {
+    function toggleMenu() {
         const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
         menuToggle.setAttribute('aria-expanded', !isExpanded);
         navLinks.classList.toggle('active');
         menuToggle.classList.toggle('active');
-    });
-
+        mobileOverlay.classList.toggle('active');
+        
+        // Prevenir scroll del body cuando el menú está abierto
+        if (!isExpanded) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+    
+    function closeMenu() {
+        navLinks.classList.remove('active');
+        menuToggle.classList.remove('active');
+        mobileOverlay.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+    }
+    
+    menuToggle.addEventListener('click', toggleMenu);
+    
+    // Cerrar menú al hacer clic en el overlay
+    mobileOverlay.addEventListener('click', closeMenu);
+    
     // Cerrar menú al hacer clic en un enlace
     navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-            menuToggle.classList.remove('active');
-            menuToggle.setAttribute('aria-expanded', 'false');
-        });
+        link.addEventListener('click', closeMenu);
+    });
+    
+    // Cerrar menú con tecla Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+            closeMenu();
+        }
     });
 }
 
