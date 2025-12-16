@@ -103,20 +103,7 @@ body {
     position: relative;
 }
 
-.nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--purple-glow);
-    transition: width 0.3s ease;
-}
 
-.nav-links a:hover::after {
-    width: 100%;
-}
 
 .menu-toggle {
     display: none;
@@ -1333,12 +1320,7 @@ body {
     transform: translateY(-1px);
 }
 
-.nav-link.active::after {
-    width: 100% !important;
-    background: var(--purple-glow);
-    height: 3px;
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
-}
+
 
 /* Enhanced Back to Top Button */
 .back-to-top {
