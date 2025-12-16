@@ -866,7 +866,7 @@ body {
     }
 }
 
-/* Loading Screen */
+/* Loading Screen - Optimized */
 .loader {
     position: fixed;
     top: 0;
@@ -878,7 +878,10 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 10000;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease-out;
+    will-change: opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0);
 }
 
 .loader-content {
@@ -893,6 +896,8 @@ body {
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 0 auto 20px;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 @keyframes spin {
@@ -1560,4 +1565,24 @@ select:focus {
 .wave {
     transform: translateZ(0);
     backface-visibility: hidden;
+}
+/* Fallback icons for no-fontawesome class */
+.no-fontawesome .fa-file-pdf::before { content: "📄"; }
+.no-fontawesome .fa-copy::before { content: "📋"; }
+.no-fontawesome .fa-external-link-alt::before { content: "🔗"; }
+.no-fontawesome .fa-paper-plane::before { content: "✉️"; }
+.no-fontawesome .fa-arrow-up::before { content: "↑"; }
+.no-fontawesome .fa-users::before { content: "👥"; }
+.no-fontawesome .fa-project-diagram::before { content: "🔗"; }
+.no-fontawesome .fa-shield-alt::before { content: "🛡️"; }
+.no-fontawesome .fa-file-contract::before { content: "📜"; }
+.no-fontawesome .fab.fa-twitter::before { content: "🐦"; }
+.no-fontawesome .fa-envelope::before { content: "📧"; }
+.no-fontawesome .fa-check::before { content: "✓"; }
+.no-fontawesome .fa-times::before { content: "✗"; }
+
+.no-fontawesome [class*="fa-"]::before {
+    font-family: inherit;
+    font-weight: normal;
+    font-style: normal;
 }

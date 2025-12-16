@@ -1,13 +1,146 @@
-// Loading Screen
-window.addEventListener('load', () => {
-    const loader = document.getElementById('loader');
-    setTimeout(() => {
+// Definitive Loading Screen Solution
+(function() {
+    'use strict';
+    
+    let loaderHidden = false;
+    let startTime = performance.now();
+    
+    function log(message) {
+        const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
+        console.log(`[${elapsed}s] Loader: ${message}`);
+    }
+    
+    function updateStatus(message) {
+        const status = document.getElementById('loadingStatus');
+        if (status) {
+            status.textContent = message;
+        }
+        log(message);
+    }
+    
+    function hideLoader() {
+        if (loaderHidden) return;
+        loaderHidden = true;
+        
+        const loader = document.getElementById('loader');
+        if (!loader) return;
+        
+        updateStatus('Completado');
+        
+        // Smooth fade out
+        loader.style.transition = 'opacity 0.5s ease-out';
         loader.style.opacity = '0';
+        
         setTimeout(() => {
             loader.style.display = 'none';
+            loader.remove(); // Clean up DOM
+            log('Loader removed from DOM');
         }, 500);
-    }, 1000);
-});
+    }
+    
+    function checkCriticalResources() {
+        const criticalSelectors = [
+            '.navbar',
+            '.hero',
+            '#navLinks',
+            '.logo-img'
+        ];
+        
+        const missing = criticalSelectors.filter(selector => !document.querySelector(selector));
+        
+        if (missing.length > 0) {
+            log(`Missing critical elements: ${missing.join(', ')}`);
+            return false;
+        }
+        
+        log('All critical resources found');
+        return true;
+    }
+    
+    function initLoader() {
+        updateStatus('Iniciando...');
+        
+        // Immediate check if already loaded
+        if (document.readyState === 'complete') {
+            updateStatus('Ya cargado');
+            setTimeout(hideLoader, 300);
+            return;
+        }
+        
+        // Strategy 1: Fast DOM-based loading (most reliable)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function domReady() {
+                updateStatus('DOM listo');
+                
+                // Quick check and hide
+                setTimeout(() => {
+                    if (!loaderHidden && checkCriticalResources()) {
+                        updateStatus('Recursos OK');
+                        setTimeout(hideLoader, 800);
+                    }
+                }, 100);
+            }, { once: true });
+        } else {
+            // DOM already ready
+            updateStatus('DOM ya listo');
+            setTimeout(() => {
+                if (!loaderHidden && checkCriticalResources()) {
+                    setTimeout(hideLoader, 800);
+                }
+            }, 100);
+        }
+        
+        // Strategy 2: Full load event (backup)
+        window.addEventListener('load', function windowLoaded() {
+            updateStatus('Carga completa');
+            if (!loaderHidden) {
+                setTimeout(hideLoader, 500);
+            }
+        }, { once: true });
+        
+        // Strategy 3: Time-based fallbacks
+        setTimeout(() => {
+            if (!loaderHidden) {
+                updateStatus('Fallback 2s');
+                if (checkCriticalResources()) {
+                    hideLoader();
+                }
+            }
+        }, 2000);
+        
+        setTimeout(() => {
+            if (!loaderHidden) {
+                updateStatus('Fallback 4s');
+                hideLoader();
+            }
+        }, 4000);
+        
+        // Strategy 4: Emergency fallback
+        setTimeout(() => {
+            if (!loaderHidden) {
+                updateStatus('Forzando...');
+                hideLoader();
+            }
+        }, 6000);
+    }
+    
+    // Initialize immediately
+    if (document.getElementById('loader')) {
+        initLoader();
+    } else {
+        // Wait for loader element to exist
+        const observer = new MutationObserver((mutations, obs) => {
+            if (document.getElementById('loader')) {
+                obs.disconnect();
+                initLoader();
+            }
+        });
+        observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+        });
+    }
+})();
 
 // Energy Canvas Animation - Optimized with mobile detection
 const canvas = document.getElementById('energyCanvas');
@@ -755,4 +888,24 @@ document.querySelectorAll('.objective-item, .info-item').forEach(card => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         card.style.transform = 'none !important';
     }
+});
+// Font Awesome fallback detection
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        const testElement = document.createElement('i');
+        testElement.className = 'fas fa-home';
+        testElement.style.position = 'absolute';
+        testElement.style.left = '-9999px';
+        testElement.style.visibility = 'hidden';
+        document.body.appendChild(testElement);
+        
+        const computedStyle = window.getComputedStyle(testElement, '::before');
+        const fontFamily = computedStyle.getPropertyValue('font-family');
+        
+        if (!fontFamily.includes('Font Awesome')) {
+            document.body.classList.add('no-fontawesome');
+        }
+        
+        document.body.removeChild(testElement);
+    }, 1000);
 });
