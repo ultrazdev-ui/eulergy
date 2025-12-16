@@ -1,153 +1,20 @@
-// Definitive Loading Screen Solution
-(function() {
-    'use strict';
-    
-    let loaderHidden = false;
-    let startTime = performance.now();
-    
-    function log(message) {
-        const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
-        console.log(`[${elapsed}s] Loader: ${message}`);
-    }
-    
-    function updateStatus(message) {
-        const status = document.getElementById('loadingStatus');
-        if (status) {
-            status.textContent = message;
-        }
-        log(message);
-    }
-    
-    function hideLoader() {
-        if (loaderHidden) return;
-        loaderHidden = true;
-        
-        const loader = document.getElementById('loader');
-        if (!loader) return;
-        
-        updateStatus('Completado');
-        
-        // Smooth fade out
-        loader.style.transition = 'opacity 0.5s ease-out';
+// Loading Screen
+window.addEventListener('load', () => {
+    const loader = document.getElementById('loader');
+    setTimeout(() => {
         loader.style.opacity = '0';
-        
         setTimeout(() => {
             loader.style.display = 'none';
-            loader.remove(); // Clean up DOM
-            log('Loader removed from DOM');
         }, 500);
-    }
-    
-    function checkCriticalResources() {
-        const criticalSelectors = [
-            '.navbar',
-            '.hero',
-            '#navLinks',
-            '.logo-img'
-        ];
-        
-        const missing = criticalSelectors.filter(selector => !document.querySelector(selector));
-        
-        if (missing.length > 0) {
-            log(`Missing critical elements: ${missing.join(', ')}`);
-            return false;
-        }
-        
-        log('All critical resources found');
-        return true;
-    }
-    
-    function initLoader() {
-        updateStatus('Iniciando...');
-        
-        // Immediate check if already loaded
-        if (document.readyState === 'complete') {
-            updateStatus('Ya cargado');
-            setTimeout(hideLoader, 300);
-            return;
-        }
-        
-        // Strategy 1: Fast DOM-based loading (most reliable)
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function domReady() {
-                updateStatus('DOM listo');
-                
-                // Quick check and hide
-                setTimeout(() => {
-                    if (!loaderHidden && checkCriticalResources()) {
-                        updateStatus('Recursos OK');
-                        setTimeout(hideLoader, 800);
-                    }
-                }, 100);
-            }, { once: true });
-        } else {
-            // DOM already ready
-            updateStatus('DOM ya listo');
-            setTimeout(() => {
-                if (!loaderHidden && checkCriticalResources()) {
-                    setTimeout(hideLoader, 800);
-                }
-            }, 100);
-        }
-        
-        // Strategy 2: Full load event (backup)
-        window.addEventListener('load', function windowLoaded() {
-            updateStatus('Carga completa');
-            if (!loaderHidden) {
-                setTimeout(hideLoader, 500);
-            }
-        }, { once: true });
-        
-        // Strategy 3: Time-based fallbacks
-        setTimeout(() => {
-            if (!loaderHidden) {
-                updateStatus('Fallback 2s');
-                if (checkCriticalResources()) {
-                    hideLoader();
-                }
-            }
-        }, 2000);
-        
-        setTimeout(() => {
-            if (!loaderHidden) {
-                updateStatus('Fallback 4s');
-                hideLoader();
-            }
-        }, 4000);
-        
-        // Strategy 4: Emergency fallback
-        setTimeout(() => {
-            if (!loaderHidden) {
-                updateStatus('Forzando...');
-                hideLoader();
-            }
-        }, 6000);
-    }
-    
-    // Initialize immediately
-    if (document.getElementById('loader')) {
-        initLoader();
-    } else {
-        // Wait for loader element to exist
-        const observer = new MutationObserver((mutations, obs) => {
-            if (document.getElementById('loader')) {
-                obs.disconnect();
-                initLoader();
-            }
-        });
-        observer.observe(document.documentElement, {
-            childList: true,
-            subtree: true
-        });
-    }
-})();
+    }, 1000);
+});
 
 // Energy Canvas Animation - Optimized with mobile detection
 const canvas = document.getElementById('energyCanvas');
 if (canvas) {
     const ctx = canvas.getContext('2d', { alpha: true });
-        let animationId;
-        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    let animationId;
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
     
     // Set canvas size
     function resizeCanvas() {
@@ -280,46 +147,27 @@ if (logoImg) {
     });
 }
 
-// Enhanced smooth scrolling with active navigation
+// Smooth scrolling para los enlaces de navegación
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            // Remove active class from all nav links
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // Add active class to clicked link
-            this.classList.add('active');
-            
             target.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
             });
-            
-            // Update URL without jumping
-            history.pushState(null, null, this.getAttribute('href'));
         }
     });
 });
 
-// Enhanced navbar scroll effect with active section detection
+// Navbar scroll effect
 let lastScroll = 0;
 const navbar = document.querySelector('.navbar');
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-link');
-
-// Progress indicator
-const progressIndicator = document.createElement('div');
-progressIndicator.className = 'progress-indicator';
-document.body.appendChild(progressIndicator);
 
 window.addEventListener('scroll', () => {
     const currentScroll = window.pageYOffset;
     
-    // Navbar styling
     if (currentScroll > 100) {
         navbar.style.padding = '10px 0';
         navbar.style.boxShadow = '0 5px 20px rgba(216, 150, 255, 0.3)';
@@ -327,30 +175,6 @@ window.addEventListener('scroll', () => {
         navbar.style.padding = '20px 0';
         navbar.style.boxShadow = 'none';
     }
-    
-    // Progress indicator
-    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
-    progressIndicator.style.width = scrolled + '%';
-    
-    // Active section detection
-    let current = '';
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        if (currentScroll >= (sectionTop - 200)) {
-            current = section.getAttribute('id');
-        }
-    });
-    
-    // Update active nav link
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('data-section') === current) {
-            link.classList.add('active');
-        }
-    });
     
     lastScroll = currentScroll;
 });
@@ -545,23 +369,6 @@ document.querySelectorAll('.objective-item').forEach(card => {
     });
 });
 
-// Contador animado para proyectos
-function animateCounter(element, target) {
-    let current = 0;
-    const increment = target / 100;
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            element.textContent = target;
-            clearInterval(timer);
-        } else {
-            element.textContent = Math.floor(current);
-        }
-    }, 20);
-}
-
-
-
 // Back to Top Button
 const backToTopButton = document.getElementById('backToTop');
 
@@ -596,316 +403,4 @@ window.addEventListener('scroll', () => {
         });
         ticking = true;
     }
-});
-// Enhanced accessibility features
-document.addEventListener('DOMContentLoaded', () => {
-    // Keyboard navigation for custom elements
-    document.querySelectorAll('.cta-button, .copy-btn, .social-btn').forEach(button => {
-        button.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                button.click();
-            }
-        });
-    });
-    
-    // Focus management for mobile menu
-    const menuToggleElement = document.getElementById('menuToggle');
-    const navLinksElement = document.getElementById('navLinks');
-    
-    if (menuToggleElement && navLinksElement) {
-        menuToggleElement.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                menuToggleElement.click();
-            }
-        });
-        
-        // Focus first menu item when menu opens
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    if (navLinksElement.classList.contains('active')) {
-                        const firstLink = navLinksElement.querySelector('a');
-                        if (firstLink) {
-                            setTimeout(() => firstLink.focus(), 100);
-                        }
-                    }
-                }
-            });
-        });
-        
-        observer.observe(navLinksElement, { attributes: true });
-    }
-    
-    // Enhanced section animations with intersection observer
-    const sectionObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                
-                // Animate child elements with stagger
-                const children = entry.target.querySelectorAll('.objective-item, .info-item');
-                children.forEach((child, index) => {
-                    setTimeout(() => {
-                        child.style.opacity = '1';
-                        child.style.transform = 'translateY(0)';
-                    }, index * 100);
-                });
-            }
-        });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
-    
-    // Observe all sections
-    document.querySelectorAll('section').forEach(section => {
-        section.classList.add('section-enter');
-        sectionObserver.observe(section);
-    });
-    
-    // Enhanced copy functionality with better feedback
-    window.copyToClipboard = function(text) {
-        const button = event.target.closest('.copy-btn');
-        const originalText = button.innerHTML;
-        
-        // Add loading state
-        button.classList.add('loading');
-        button.disabled = true;
-        
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(() => {
-                showCopySuccess(button, originalText);
-            }).catch(err => {
-                console.error('Error al copiar:', err);
-                fallbackCopy(text, button, originalText);
-            });
-        } else {
-            fallbackCopy(text, button, originalText);
-        }
-    };
-    
-    function showCopySuccess(button, originalText) {
-        button.classList.remove('loading');
-        button.classList.add('success');
-        button.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> ¡Copiado!';
-        button.disabled = false;
-        
-        setTimeout(() => {
-            button.classList.remove('success');
-            button.innerHTML = originalText;
-        }, 2000);
-        
-        showNotification('¡Dirección copiada al portapapeles!', 'success');
-    }
-    
-    function showCopyError(button, originalText) {
-        button.classList.remove('loading');
-        button.classList.add('error');
-        button.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i> Error';
-        button.disabled = false;
-        
-        setTimeout(() => {
-            button.classList.remove('error');
-            button.innerHTML = originalText;
-        }, 2000);
-        
-        showNotification('Error al copiar. Inténtalo de nuevo.', 'error');
-    }
-    
-    // Enhanced tooltips
-    function createTooltip(element, text) {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'tooltip';
-        tooltip.innerHTML = `
-            <span class="tooltiptext">${text}</span>
-        `;
-        element.appendChild(tooltip);
-    }
-    
-    // Add tooltips to complex elements
-    const contractAddress = document.getElementById('contractAddress');
-    if (contractAddress) {
-        contractAddress.setAttribute('title', 'Dirección oficial del contrato inteligente de Eulergy en la blockchain');
-    }
-    
-    // Enhanced keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        // ESC key closes mobile menu
-        if (e.key === 'Escape') {
-            const navLinksEsc = document.getElementById('navLinks');
-            const menuToggleEsc = document.getElementById('menuToggle');
-            if (navLinksEsc && navLinksEsc.classList.contains('active')) {
-                navLinksEsc.classList.remove('active');
-                menuToggleEsc.classList.remove('active');
-                menuToggleEsc.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
-                menuToggleEsc.focus();
-            }
-        }
-        
-        // Tab navigation improvements
-        if (e.key === 'Tab') {
-            document.body.classList.add('keyboard-navigation');
-        }
-    });
-    
-    // Remove keyboard navigation class on mouse use
-    document.addEventListener('mousedown', () => {
-        document.body.classList.remove('keyboard-navigation');
-    });
-    
-    // Enhanced loading states for external links
-    document.querySelectorAll('a[target="_blank"]').forEach(link => {
-        link.addEventListener('click', (e) => {
-            const button = e.target.closest('.cta-button');
-            if (button) {
-                button.classList.add('loading');
-                setTimeout(() => {
-                    button.classList.remove('loading');
-                }, 1000);
-            }
-        });
-    });
-    
-    // Improved focus management
-    let focusedElementBeforeModal;
-    
-    // Store focus when opening modals/menus
-    document.addEventListener('focusin', (e) => {
-        if (!e.target.closest('.nav-links.active')) {
-            focusedElementBeforeModal = e.target;
-        }
-    });
-    
-    // Announce page changes to screen readers
-    function announcePageChange(message) {
-        const announcement = document.createElement('div');
-        announcement.setAttribute('aria-live', 'polite');
-        announcement.setAttribute('aria-atomic', 'true');
-        announcement.className = 'sr-only';
-        announcement.textContent = message;
-        document.body.appendChild(announcement);
-        
-        setTimeout(() => {
-            document.body.removeChild(announcement);
-        }, 1000);
-    }
-    
-    // Announce section changes
-    const sectionTitles = {
-        'inicio': 'Sección de inicio',
-        'vision': 'Sección de visión',
-        'mision': 'Sección de misión',
-        'contacto': 'Sección de contacto'
-    };
-    
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            const section = e.target.getAttribute('data-section');
-            if (sectionTitles[section]) {
-                setTimeout(() => {
-                    announcePageChange(`Navegando a ${sectionTitles[section]}`);
-                }, 500);
-            }
-        });
-    });
-});
-
-// Enhanced notification system with better accessibility
-function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.textContent = message;
-    notification.className = `notification notification-${type}`;
-    notification.setAttribute('role', 'alert');
-    notification.setAttribute('aria-live', 'assertive');
-    
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? 'linear-gradient(135deg, #27ae60, #2ecc71)' : 'linear-gradient(135deg, #e74c3c, #c0392b)'};
-        color: white;
-        padding: 15px 25px;
-        border-radius: 10px;
-        font-weight: 600;
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-        box-shadow: 0 10px 30px ${type === 'success' ? 'rgba(39, 174, 96, 0.4)' : 'rgba(231, 76, 60, 0.4)'};
-        max-width: 300px;
-        word-wrap: break-word;
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Focus notification for screen readers
-    notification.focus();
-    
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 300);
-    }, 3000);
-}
-
-// Enhanced 3D card effects with accessibility considerations
-document.querySelectorAll('.objective-item, .info-item').forEach(card => {
-    let isHovered = false;
-    
-    function apply3DEffect(e) {
-        if (!isHovered) return;
-        
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateX = (y - centerY) / 8;
-        const rotateY = (centerX - x) / 8;
-        
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
-    }
-    
-    function reset3DEffect() {
-        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
-        isHovered = false;
-    }
-    
-    card.addEventListener('mouseenter', () => {
-        isHovered = true;
-    });
-    
-    card.addEventListener('mousemove', apply3DEffect);
-    card.addEventListener('mouseleave', reset3DEffect);
-    
-    // Disable 3D effects for users who prefer reduced motion
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        card.style.transform = 'none !important';
-    }
-});
-// Font Awesome fallback detection
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        const testElement = document.createElement('i');
-        testElement.className = 'fas fa-home';
-        testElement.style.position = 'absolute';
-        testElement.style.left = '-9999px';
-        testElement.style.visibility = 'hidden';
-        document.body.appendChild(testElement);
-        
-        const computedStyle = window.getComputedStyle(testElement, '::before');
-        const fontFamily = computedStyle.getPropertyValue('font-family');
-        
-        if (!fontFamily.includes('Font Awesome')) {
-            document.body.classList.add('no-fontawesome');
-        }
-        
-        document.body.removeChild(testElement);
-    }, 1000);
 });
