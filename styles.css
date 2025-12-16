@@ -907,41 +907,6 @@ body {
     letter-spacing: 2px;
 }
 
-.skip-loader-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background: var(--purple-primary);
-    color: var(--text-light);
-    border: 2px solid var(--purple-glow);
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.skip-loader-btn:hover {
-    background: var(--purple-light);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
-}
-
-.loader-progress {
-    width: 200px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 2px;
-    margin: 20px auto;
-    overflow: hidden;
-}
-
-.loader-progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, var(--purple-primary), var(--purple-glow));
-    width: 0%;
-    transition: width 0.3s ease;
-    border-radius: 2px;
-}
-
 /* Back to Top Button */
 .back-to-top {
     position: fixed;
