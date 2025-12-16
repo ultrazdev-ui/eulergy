@@ -27,6 +27,15 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Theme Detection -->
+    <script>
+        // Detect user preference and apply theme immediately to prevent flash
+        const savedTheme = localStorage.getItem('eulergy-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+    </script>
+    
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
@@ -56,6 +65,9 @@
         </div>
     </div>
 
+    <!-- Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
     <!-- Navegación -->
     <nav class="navbar" role="navigation" aria-label="Navegación principal">
         <div class="container">
@@ -64,18 +76,30 @@
                 <span>Eulergy</span>
             </div>
             <ul class="nav-links" id="navLinks">
-                <li><a href="#inicio">INICIO</a></li>
-                <li><a href="#vision">VISIÓN</a></li>
-                <li><a href="#mision">MISIÓN</a></li>
-                <li><a href="#contacto">CONTACTO</a></li>
+                <li><a href="#inicio" class="nav-link active" data-section="inicio">INICIO</a></li>
+                <li><a href="#vision" class="nav-link" data-section="vision">VISIÓN</a></li>
+                <li><a href="#mision" class="nav-link" data-section="mision">MISIÓN</a></li>
+                <li><a href="#contacto" class="nav-link" data-section="contacto">CONTACTO</a></li>
             </ul>
-            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="navLinks">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+            <div class="nav-controls">
+                <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema" title="Cambiar tema">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="navLinks">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
         </div>
     </nav>
+    
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs" id="breadcrumbs">
+        <div class="container">
+            <span class="breadcrumb-item active">Inicio</span>
+        </div>
+    </div>
 
     <main>
         <!-- Hero Section -->
@@ -91,13 +115,19 @@
                 <h1 class="hero-title">EULERGY</h1>
                 <p class="hero-subtitle">"Cada idea genera energía, y esa energía se transforma en valor."</p>
                 <div class="hero-buttons">
-                    <a href="https://drive.google.com/file/d/1GesyyaJed7CxnS8Xx0R8x3GWfYLBo6_y/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cta-button primary" aria-label="Ver documentación en español">
-                        <i class="fas fa-file-pdf" aria-hidden="true"></i>
-                        <span>Documentación <span class="lang-badge">ES</span></span>
+                    <a href="https://drive.google.com/file/d/1GesyyaJed7CxnS8Xx0R8x3GWfYLBo6_y/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cta-button primary enhanced-button" aria-label="Ver documentación en español">
+                        <span class="button-content">
+                            <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                            <span>Documentación <span class="lang-badge">ES</span></span>
+                        </span>
+                        <span class="button-ripple"></span>
                     </a>
-                    <a href="https://drive.google.com/file/d/1gFimXybiSUXLvUKxlsCPuir9QxweLO1Y/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cta-button secondary" aria-label="View documentation in English">
-                        <i class="fas fa-file-pdf" aria-hidden="true"></i>
-                        <span>Documentation <span class="lang-badge">EN</span></span>
+                    <a href="https://drive.google.com/file/d/1gFimXybiSUXLvUKxlsCPuir9QxweLO1Y/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cta-button secondary enhanced-button" aria-label="View documentation in English">
+                        <span class="button-content">
+                            <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                            <span>Documentation <span class="lang-badge">EN</span></span>
+                        </span>
+                        <span class="button-ripple"></span>
                     </a>
                 </div>
             </div>
@@ -175,8 +205,11 @@
                                     <span class="contract-full">0xe293BE38D7dE3b25497A90e6B77d3fc77E8b10bE</span>
                                     <span class="contract-short">0xe293...10bE</span>
                                 </p>
-                                <button class="copy-btn" onclick="copyToClipboard('0xe293BE38D7dE3b25497A90e6B77d3fc77E8b10bE')" aria-label="Copiar dirección del contrato">
-                                    <i class="fas fa-copy" aria-hidden="true"></i> Copiar
+                                <button class="copy-btn enhanced-button" onclick="copyToClipboard('0xe293BE38D7dE3b25497A90e6B77d3fc77E8b10bE')" aria-label="Copiar dirección del contrato" data-tooltip="Copiar al portapapeles">
+                                    <span class="button-content">
+                                        <i class="fas fa-copy" aria-hidden="true"></i> Copiar
+                                    </span>
+                                    <span class="button-ripple"></span>
                                 </button>
                             </div>
                         </div>
@@ -188,8 +221,11 @@
                                 <h4>Twitter Oficial</h4>
                                 <p>@EulergyERGG</p>
                                 <p class="development-note">En desarrollo</p>
-                                <a href="https://twitter.com/EulergyERGG" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Visitar perfil de Twitter">
-                                    <i class="fas fa-external-link-alt" aria-hidden="true"></i> Visitar
+                                <a href="https://twitter.com/EulergyERGG" target="_blank" rel="noopener noreferrer" class="social-btn enhanced-button" aria-label="Visitar perfil de Twitter" data-tooltip="Abrir en nueva ventana">
+                                    <span class="button-content">
+                                        <i class="fas fa-external-link-alt" aria-hidden="true"></i> Visitar
+                                    </span>
+                                    <span class="button-ripple"></span>
                                 </a>
                             </div>
                         </div>
@@ -200,8 +236,11 @@
                             <div class="info-text">
                                 <h4>Correo Oficial</h4>
                                 <p>eulergyergg@gmail.com</p>
-                                <a href="mailto:eulergyergg@gmail.com" class="social-btn" aria-label="Enviar correo electrónico">
-                                    <i class="fas fa-paper-plane" aria-hidden="true"></i> Enviar Email
+                                <a href="mailto:eulergyergg@gmail.com" class="social-btn enhanced-button" aria-label="Enviar correo electrónico" data-tooltip="Abrir cliente de email">
+                                    <span class="button-content">
+                                        <i class="fas fa-paper-plane" aria-hidden="true"></i> Enviar Email
+                                    </span>
+                                    <span class="button-ripple"></span>
                                 </a>
                             </div>
                         </div>
@@ -211,10 +250,22 @@
         </section>
     </main>
 
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="customCursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-outline"></div>
+    </div>
+    
     <!-- Back to Top Button -->
-    <button id="backToTop" class="back-to-top" aria-label="Volver arriba">
-        <i class="fas fa-arrow-up" aria-hidden="true"></i>
+    <button id="backToTop" class="back-to-top enhanced-button" aria-label="Volver arriba" data-tooltip="Volver al inicio">
+        <span class="button-content">
+            <i class="fas fa-arrow-up" aria-hidden="true"></i>
+        </span>
+        <span class="button-ripple"></span>
     </button>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <!-- Footer -->
     <footer class="footer">
