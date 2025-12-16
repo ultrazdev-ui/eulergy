@@ -421,3 +421,535 @@ window.addEventListener('scroll', () => {
         ticking = true;
     }
 });
+// ===== ACCESSIBILITY & VISUAL IMPROVEMENTS =====
+
+// Accessibility and Motion Preferences Detection
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
+
+// Announcements for Screen Readers
+function announceToScreenReader(message) {
+    const announcements = document.getElementById('announcements');
+    if (announcements) {
+        announcements.textContent = message;
+        setTimeout(() => {
+            announcements.textContent = '';
+        }, 1000);
+    }
+}
+
+// Enhanced Navigation System with Accessibility
+const enhancedNavigationLinks = document.querySelectorAll('.nav-link');
+const enhancedSections = document.querySelectorAll('section[id]');
+
+if (enhancedSections.length > 0 && enhancedNavigationLinks.length > 0) {
+    // Improved section detection
+    const observerOptions = {
+        threshold: 0.2,
+        rootMargin: '-100px 0px -100px 0px'
+    };
+    
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const sectionId = entry.target.id;
+                
+                // Update active nav link with accessibility
+                enhancedNavigationLinks.forEach(link => {
+                    link.classList.remove('active');
+                    link.setAttribute('aria-current', 'false');
+                    if (link.getAttribute('data-section') === sectionId) {
+                        link.classList.add('active');
+                        link.setAttribute('aria-current', 'page');
+                        
+                        // Visual feedback with reduced motion respect
+                        if (!prefersReducedMotion) {
+                            link.style.transform = 'scale(1.05)';
+                            setTimeout(() => {
+                                link.style.transform = 'scale(1)';
+                            }, 200);
+                        }
+                        
+                        // Announce section change
+                        const sectionNames = {
+                            'inicio': 'Sección de Inicio',
+                            'vision': 'Sección de Visión',
+                            'mision': 'Sección de Misión',
+                            'contacto': 'Sección de Contacto'
+                        };
+                        announceToScreenReader(`Navegando a ${sectionNames[sectionId]}`);
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+    
+    enhancedSections.forEach(section => {
+        sectionObserver.observe(section);
+    });
+    
+    // Enhanced click navigation with accessibility
+    enhancedNavigationLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+            
+            if (targetSection) {
+                // Calculate offset for navbar
+                const navbarHeight = document.querySelector('.navbar').offsetHeight;
+                const targetPosition = targetSection.offsetTop - navbarHeight - 20;
+                
+                // Smooth scroll with reduced motion respect
+                if (prefersReducedMotion) {
+                    window.scrollTo(0, targetPosition);
+                } else {
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+                
+                // Immediate visual feedback
+                enhancedNavigationLinks.forEach(l => {
+                    l.classList.remove('active');
+                    l.setAttribute('aria-current', 'false');
+                });
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+                
+                // Focus management
+                targetSection.setAttribute('tabindex', '-1');
+                targetSection.focus();
+                setTimeout(() => {
+                    targetSection.removeAttribute('tabindex');
+                }, 1000);
+            }
+        });
+    });
+}
+
+// Enhanced Back to Top Button with Accessibility
+const enhancedBackToTopButton = document.getElementById('backToTop');
+
+if (enhancedBackToTopButton) {
+    // Show/hide button based on scroll position
+    window.addEventListener('scroll', () => {
+        const scrollPosition = window.pageYOffset;
+        const windowHeight = window.innerHeight;
+        
+        if (scrollPosition > windowHeight * 0.3) {
+            enhancedBackToTopButton.classList.add('visible');
+            enhancedBackToTopButton.setAttribute('aria-hidden', 'false');
+        } else {
+            enhancedBackToTopButton.classList.remove('visible');
+            enhancedBackToTopButton.setAttribute('aria-hidden', 'true');
+        }
+    });
+
+    // Enhanced click functionality with accessibility
+    enhancedBackToTopButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // Add click animation if motion is allowed
+        if (!prefersReducedMotion) {
+            enhancedBackToTopButton.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                enhancedBackToTopButton.style.transform = 'scale(1)';
+            }, 150);
+        }
+        
+        // Smooth scroll to top with motion preference
+        const heroSection = document.getElementById('inicio');
+        if (heroSection) {
+            if (prefersReducedMotion) {
+                window.scrollTo(0, 0);
+            } else {
+                heroSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+        
+        // Update active navigation and announce
+        enhancedNavigationLinks.forEach(link => {
+            link.classList.remove('active');
+            link.setAttribute('aria-current', 'false');
+            if (link.getAttribute('data-section') === 'inicio') {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+            }
+        });
+        
+        // Focus management and announcement
+        if (heroSection) {
+            heroSection.setAttribute('tabindex', '-1');
+            heroSection.focus();
+            setTimeout(() => {
+                heroSection.removeAttribute('tabindex');
+            }, 1000);
+        }
+        
+        announceToScreenReader('Volviendo al inicio de la página');
+        showToast('¡Volviendo al inicio! 🚀', 'info', 2000);
+    });
+    
+    // Add keyboard support
+    enhancedBackToTopButton.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            enhancedBackToTopButton.click();
+        }
+    });
+}
+
+// Enhanced Button Ripple Effects with Motion Preference
+const enhancedButtons = document.querySelectorAll('.enhanced-button');
+
+enhancedButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+        // Only add ripple effect if motion is not reduced
+        if (!prefersReducedMotion) {
+            const ripple = this.querySelector('.button-ripple');
+            if (ripple) {
+                // Reset ripple
+                ripple.style.width = '0';
+                ripple.style.height = '0';
+                
+                // Trigger ripple effect
+                setTimeout(() => {
+                    ripple.style.width = '300px';
+                    ripple.style.height = '300px';
+                }, 10);
+                
+                // Reset after animation
+                setTimeout(() => {
+                    ripple.style.width = '0';
+                    ripple.style.height = '0';
+                }, 600);
+            }
+            
+            // Add micro-bounce animation
+            this.classList.add('micro-bounce');
+            setTimeout(() => {
+                this.classList.remove('micro-bounce');
+            }, 600);
+        }
+    });
+});
+
+// Enhanced Toast Notification System with Accessibility
+const toastContainer = document.getElementById('toastContainer');
+
+function showToast(message, type = 'success', duration = 3000) {
+    if (!toastContainer) return;
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    
+    // Create toast content
+    const toastContent = document.createElement('div');
+    toastContent.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        font-size: 14px;
+    `;
+    
+    // Add icon based on type
+    const icon = document.createElement('i');
+    icon.setAttribute('aria-hidden', 'true');
+    switch(type) {
+        case 'success':
+            icon.className = 'fas fa-check-circle';
+            break;
+        case 'error':
+            icon.className = 'fas fa-exclamation-circle';
+            break;
+        case 'info':
+            icon.className = 'fas fa-info-circle';
+            break;
+        default:
+            icon.className = 'fas fa-bell';
+    }
+    
+    const messageSpan = document.createElement('span');
+    messageSpan.textContent = message;
+    
+    toastContent.appendChild(icon);
+    toastContent.appendChild(messageSpan);
+    toast.appendChild(toastContent);
+    
+    // Add to container
+    toastContainer.appendChild(toast);
+    
+    // Show toast with motion preference
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    // Auto remove
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, prefersReducedMotion ? 100 : 400);
+    }, duration);
+    
+    // Click to dismiss
+    toast.addEventListener('click', () => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, prefersReducedMotion ? 100 : 400);
+    });
+    
+    // Keyboard dismiss
+    toast.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            toast.click();
+        }
+    });
+}
+
+// Section Transition Animations with Motion Preference
+const sectionElements = document.querySelectorAll('.vision-text, .mission-intro, .objective-item, .info-item');
+
+if (!prefersReducedMotion) {
+    const transitionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('section-transition', 'visible');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    sectionElements.forEach(element => {
+        element.classList.add('section-transition');
+        transitionObserver.observe(element);
+    });
+} else {
+    // For reduced motion, just make elements visible
+    sectionElements.forEach(element => {
+        element.style.opacity = '1';
+        element.style.transform = 'translateY(0)';
+    });
+}
+
+// Enhanced Copy Function with Accessibility
+window.copyToClipboard = function(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('¡Copiado al portapapeles!', 'success');
+            announceToScreenReader('Dirección copiada al portapapeles');
+        }).catch(err => {
+            console.error('Error al copiar:', err);
+            fallbackCopy(text);
+        });
+    } else {
+        fallbackCopy(text);
+    }
+};
+
+function fallbackCopy(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        showToast('¡Copiado al portapapeles!', 'success');
+        announceToScreenReader('Dirección copiada al portapapeles');
+    } catch (err) {
+        console.error('Error al copiar:', err);
+        showToast('Error al copiar', 'error');
+        announceToScreenReader('Error al copiar al portapapeles');
+    }
+    document.body.removeChild(textArea);
+}
+
+// Enhanced 3D Card Effects with Motion Preference
+document.querySelectorAll('.objective-item, .info-item').forEach(card => {
+    if (!prefersReducedMotion) {
+        card.addEventListener('mouseenter', function() {
+            this.style.transition = 'transform 0.1s ease';
+        });
+        
+        card.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = (y - centerY) / 15;
+            const rotateY = (centerX - x) / 15;
+            
+            this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transition = 'transform 0.3s ease';
+            this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+        });
+    }
+    
+    // Add keyboard interaction
+    card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            // Add focus effect
+            card.style.transform = 'translateY(-5px)';
+            setTimeout(() => {
+                card.style.transform = 'translateY(0)';
+            }, 200);
+        }
+    });
+});
+
+// Keyboard Navigation Enhancement with Accessibility
+document.addEventListener('keydown', (e) => {
+    // Back to top with 'Home' key
+    if (e.key === 'Home' && e.ctrlKey) {
+        e.preventDefault();
+        if (enhancedBackToTopButton) {
+            enhancedBackToTopButton.click();
+        }
+    }
+    
+    // Section navigation with arrow keys (when not in input)
+    if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+        if (e.key === 'ArrowDown' && e.ctrlKey) {
+            e.preventDefault();
+            scrollToNextSection();
+        } else if (e.key === 'ArrowUp' && e.ctrlKey) {
+            e.preventDefault();
+            scrollToPrevSection();
+        }
+    }
+});
+
+// Section Navigation Functions
+function scrollToNextSection() {
+    const currentSection = getCurrentSection();
+    const sectionIds = ['inicio', 'vision', 'mision', 'contacto'];
+    const currentIndex = sectionIds.indexOf(currentSection);
+    const nextIndex = (currentIndex + 1) % sectionIds.length;
+    const nextSection = document.getElementById(sectionIds[nextIndex]);
+    
+    if (nextSection) {
+        const navbarHeight = document.querySelector('.navbar').offsetHeight;
+        const targetPosition = nextSection.offsetTop - navbarHeight - 20;
+        
+        if (prefersReducedMotion) {
+            window.scrollTo(0, targetPosition);
+        } else {
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
+        
+        announceToScreenReader(`Navegando a la siguiente sección: ${sectionIds[nextIndex]}`);
+    }
+}
+
+function scrollToPrevSection() {
+    const currentSection = getCurrentSection();
+    const sectionIds = ['inicio', 'vision', 'mision', 'contacto'];
+    const currentIndex = sectionIds.indexOf(currentSection);
+    const prevIndex = currentIndex === 0 ? sectionIds.length - 1 : currentIndex - 1;
+    const prevSection = document.getElementById(sectionIds[prevIndex]);
+    
+    if (prevSection) {
+        const navbarHeight = document.querySelector('.navbar').offsetHeight;
+        const targetPosition = prevSection.offsetTop - navbarHeight - 20;
+        
+        if (prefersReducedMotion) {
+            window.scrollTo(0, targetPosition);
+        } else {
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
+        
+        announceToScreenReader(`Navegando a la sección anterior: ${sectionIds[prevIndex]}`);
+    }
+}
+
+function getCurrentSection() {
+    const sections = document.querySelectorAll('section[id]');
+    const scrollPosition = window.pageYOffset + 200;
+    
+    for (let i = sections.length - 1; i >= 0; i--) {
+        if (sections[i].offsetTop <= scrollPosition) {
+            return sections[i].id;
+        }
+    }
+    return 'inicio';
+}
+
+// Initialize accessibility features on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Set initial aria-current for active nav link
+    const activeLink = document.querySelector('.nav-link.active');
+    if (activeLink) {
+        activeLink.setAttribute('aria-current', 'page');
+    }
+    
+    // Add glow effect to important elements (respecting motion preference)
+    if (!prefersReducedMotion) {
+        const glowElements = document.querySelectorAll('.cta-button, .logo-img');
+        glowElements.forEach(element => {
+            element.classList.add('micro-glow');
+        });
+    }
+    
+    // Show welcome toast
+    setTimeout(() => {
+        showToast('¡Bienvenido a Eulergy! 🚀', 'info', 4000);
+    }, 2000);
+    
+    // Announce page load completion
+    announceToScreenReader('Página de Eulergy cargada completamente');
+});
+
+// Performance and Error Monitoring
+let performanceMetrics = {
+    loadTime: 0,
+    scrollEvents: 0,
+    interactions: 0
+};
+
+// Track load time
+window.addEventListener('load', () => {
+    performanceMetrics.loadTime = performance.now();
+    console.log(`Eulergy loaded in ${performanceMetrics.loadTime.toFixed(2)}ms`);
+    
+    // Log accessibility preferences
+    console.log('Accessibility preferences:', {
+        reducedMotion: prefersReducedMotion,
+        highContrast: prefersHighContrast
+    });
+});
+
+// Welcome message with accessibility info
+console.log('%c🚀 Eulergy - Cada idea genera energía', 'color: #00d4ff; font-size: 16px; font-weight: bold;');
+console.log('%c♿ Accessibility Enhanced Version', 'color: #2ecc71; font-size: 12px;');
+console.log('%c✨ Visual Improvements Active', 'color: #2196f3; font-size: 12px;');
