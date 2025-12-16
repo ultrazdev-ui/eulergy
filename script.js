@@ -427,42 +427,7 @@ window.addEventListener('scroll', () => {
 
 // ===== NEW UX/UI FEATURES IMPLEMENTATION =====
 
-// Theme Toggle Functionality
-const themeToggle = document.getElementById('themeToggle');
-const themeIcon = document.getElementById('themeIcon');
-
-if (themeToggle && themeIcon) {
-    // Initialize theme icon based on current theme
-    function updateThemeIcon() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        if (currentTheme === 'dark') {
-            themeIcon.className = 'fas fa-sun';
-        } else {
-            themeIcon.className = 'fas fa-moon';
-        }
-    }
-    
-    // Initialize icon
-    updateThemeIcon();
-    
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('eulergy-theme', newTheme);
-        
-        // Update icon with animation
-        themeToggle.style.transform = 'scale(0.8)';
-        setTimeout(() => {
-            updateThemeIcon();
-            themeToggle.style.transform = 'scale(1)';
-        }, 150);
-        
-        // Show toast notification
-        showToast(`Tema ${newTheme === 'dark' ? 'oscuro' : 'claro'} activado`, 'info');
-    });
-}
+// Theme functionality removed as requested
 
 // Scroll Progress Bar
 const scrollProgress = document.getElementById('scrollProgress');
@@ -765,14 +730,6 @@ document.querySelectorAll('.objective-item, .info-item').forEach(card => {
 
 // Keyboard Navigation Enhancement
 document.addEventListener('keydown', (e) => {
-    // Theme toggle with 'T' key
-    if (e.key.toLowerCase() === 't' && !e.ctrlKey && !e.altKey) {
-        const activeElement = document.activeElement;
-        if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
-            themeToggle?.click();
-        }
-    }
-    
     // Back to top with 'Home' key
     if (e.key === 'Home' && e.ctrlKey) {
         e.preventDefault();
