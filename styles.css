@@ -699,12 +699,94 @@ body {
     }
 }
 
+
+
 /* Footer */
 .footer {
     padding: 30px 0;
     background: rgba(0, 26, 51, 0.95);
     text-align: center;
     border-top: 1px solid rgba(33, 150, 243, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .contact-info {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .menu-toggle {
+        display: flex;
+    }
+    
+    .hero-title {
+        letter-spacing: 5px;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        padding: 0 20px;
+    }
+    
+    .cta-button {
+        width: 100%;
+        justify-content: center;
+        padding: 16px 30px;
+        font-size: 16px;
+    }
+    
+    .vision-text {
+        font-size: 18px;
+        padding: 35px 30px;
+        line-height: 1.8;
+    }
+    
+    .vision-text .highlight {
+        font-size: 20px;
+    }
+    
+    .mission-intro {
+        font-size: 18px;
+        padding: 35px 30px;
+        line-height: 1.8;
+    }
+    
+    .mission-objectives {
+        grid-template-columns: 1fr;
+    }
+    
+    .objective-item {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .objective-icon {
+        width: 60px;
+        height: 60px;
+        min-width: 60px;
+        font-size: 26px;
+    }
+    
+    .logo-img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .logo {
+        font-size: 22px;
+    }
+    
+    .info-item {
+        max-width: 100%;
+    }
 }
 
 /* Loading Screen */
@@ -719,10 +801,7 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 10000;
-    transition: opacity 0.5s ease-out;
-    will-change: opacity;
-    backface-visibility: hidden;
-    transform: translateZ(0);
+    transition: opacity 0.5s ease;
 }
 
 .loader-content {
@@ -737,8 +816,6 @@ body {
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 0 auto 20px;
-    will-change: transform;
-    transform: translateZ(0);
 }
 
 @keyframes spin {
@@ -829,85 +906,8 @@ body {
     will-change: transform;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-    .contact-info {
-        grid-template-columns: 1fr;
-    }
-}
-
+/* Responsive Updates */
 @media (max-width: 768px) {
-    .nav-links {
-        display: none;
-    }
-    
-    .menu-toggle {
-        display: flex;
-    }
-    
-    .hero-title {
-        letter-spacing: 5px;
-    }
-    
-    .hero-buttons {
-        flex-direction: column;
-        width: 100%;
-        padding: 0 20px;
-    }
-    
-    .cta-button {
-        width: 100%;
-        justify-content: center;
-        padding: 16px 30px;
-        font-size: 16px;
-    }
-    
-    .vision-text {
-        font-size: 18px;
-        padding: 35px 30px;
-        line-height: 1.8;
-    }
-    
-    .vision-text .highlight {
-        font-size: 20px;
-    }
-    
-    .mission-intro {
-        font-size: 18px;
-        padding: 35px 30px;
-        line-height: 1.8;
-    }
-    
-    .mission-objectives {
-        grid-template-columns: 1fr;
-    }
-    
-    .objective-item {
-        flex-direction: column;
-        text-align: center;
-        align-items: center;
-    }
-    
-    .objective-icon {
-        width: 60px;
-        height: 60px;
-        min-width: 60px;
-        font-size: 26px;
-    }
-    
-    .logo-img {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .logo {
-        font-size: 22px;
-    }
-    
-    .info-item {
-        max-width: 100%;
-    }
-    
     .contract-full {
         display: none;
     }
@@ -1017,23 +1017,47 @@ body {
     }
 }
 
-/* Fallback icons for no-fontawesome class */
-.no-fontawesome .fa-file-pdf::before { content: "📄"; }
-.no-fontawesome .fa-copy::before { content: "📋"; }
-.no-fontawesome .fa-external-link-alt::before { content: "🔗"; }
-.no-fontawesome .fa-paper-plane::before { content: "✉️"; }
-.no-fontawesome .fa-arrow-up::before { content: "↑"; }
-.no-fontawesome .fa-users::before { content: "👥"; }
-.no-fontawesome .fa-project-diagram::before { content: "🔗"; }
-.no-fontawesome .fa-shield-alt::before { content: "🛡️"; }
-.no-fontawesome .fa-file-contract::before { content: "📜"; }
-.no-fontawesome .fab.fa-twitter::before { content: "🐦"; }
-.no-fontawesome .fa-envelope::before { content: "📧"; }
-.no-fontawesome .fa-check::before { content: "✓"; }
-.no-fontawesome .fa-times::before { content: "✗"; }
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
 
-.no-fontawesome [class*="fa-"]::before {
-    font-family: inherit;
-    font-weight: normal;
-    font-style: normal;
+::-webkit-scrollbar-track {
+    background: var(--purple-dark);
+    border-left: 1px solid rgba(33, 150, 243, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--purple-primary), var(--purple-light));
+    border-radius: 6px;
+    border: 2px solid var(--purple-dark);
+    transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--purple-light), var(--purple-glow));
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, var(--purple-glow), var(--purple-accent));
+}
+
+/* Firefox Scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--purple-light) var(--purple-dark);
+}
+
+/* Scrollbar para elementos con overflow */
+.nav-links::-webkit-scrollbar,
+.contact-info::-webkit-scrollbar {
+    width: 8px;
+}
+
+.nav-links::-webkit-scrollbar-thumb,
+.contact-info::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--purple-primary), var(--purple-light));
+    border-radius: 4px;
 }

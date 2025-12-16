@@ -369,6 +369,23 @@ document.querySelectorAll('.objective-item').forEach(card => {
     });
 });
 
+// Contador animado para proyectos
+function animateCounter(element, target) {
+    let current = 0;
+    const increment = target / 100;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            element.textContent = target;
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(current);
+        }
+    }, 20);
+}
+
+
+
 // Back to Top Button
 const backToTopButton = document.getElementById('backToTop');
 
