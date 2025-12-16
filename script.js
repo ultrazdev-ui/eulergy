@@ -1,20 +1,110 @@
-// Loading Screen
-window.addEventListener('load', () => {
+// Loading Screen with fallback
+function hideLoader() {
     const loader = document.getElementById('loader');
-    setTimeout(() => {
+    if (loader) {
         loader.style.opacity = '0';
         setTimeout(() => {
             loader.style.display = 'none';
         }, 500);
-    }, 1000);
+    }
+}
+
+// Primary loading event
+window.addEventListener('load', () => {
+    // Check if critical resources are loaded
+    const criticalElements = [
+        document.getElementById('navLinks'),
+        document.querySelector('.hero'),
+        document.querySelector('.navbar')
+    ];
+    
+    const allLoaded = criticalElements.every(el => el !== null);
+    
+    if (allLoaded) {
+        setTimeout(hideLoader, 1000);
+    } else {
+        console.warn('Some critical elements not found, hiding loader anyway');
+        setTimeout(hideLoader, 2000);
+    }
 });
+
+// Progress simulation and fallback
+document.addEventListener('DOMContentLoaded', () => {
+    const progressBar = document.getElementById('loaderProgress');
+    const loaderText = document.getElementById('loaderText');
+    let progress = 0;
+    
+    // Simulate loading progress
+    const progressInterval = setInterval(() => {
+        progress += Math.random() * 15 + 5; // Random increment between 5-20%
+        if (progress > 100) progress = 100;
+        
+        if (progressBar) {
+            progressBar.style.width = progress + '%';
+        }
+        
+        // Update loading text
+        if (loaderText) {
+            if (progress < 30) {
+                loaderText.textContent = 'Inicializando...';
+            } else if (progress < 60) {
+                loaderText.textContent = 'Cargando recursos...';
+            } else if (progress < 90) {
+                loaderText.textContent = 'Preparando interfaz...';
+            } else {
+                loaderText.textContent = '¡Casi listo!';
+            }
+        }
+        
+        if (progress >= 100) {
+            clearInterval(progressInterval);
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                if (loader && loader.style.display !== 'none') {
+                    console.log('Progress complete: Hiding loader');
+                    hideLoader();
+                }
+            }, 500);
+        }
+    }, 200);
+    
+    // Fallback after 6 seconds if page is still loading
+    setTimeout(() => {
+        clearInterval(progressInterval);
+        const loader = document.getElementById('loader');
+        if (loader && loader.style.display !== 'none') {
+            console.log('Fallback: Hiding loader after timeout');
+            hideLoader();
+        }
+    }, 6000);
+});
+
+// Show skip button after 4 seconds if loader is still visible
+setTimeout(() => {
+    const loader = document.getElementById('loader');
+    const skipBtn = document.getElementById('skipLoader');
+    if (loader && loader.style.display !== 'none' && skipBtn) {
+        skipBtn.style.display = 'block';
+        console.log('Showing skip loader button');
+    }
+}, 4000);
+
+// Additional fallback for immediate hiding if needed
+setTimeout(() => {
+    const loader = document.getElementById('loader');
+    if (loader && loader.style.display !== 'none') {
+        console.log('Emergency fallback: Hiding loader');
+        hideLoader();
+    }
+}, 8000);
 
 // Energy Canvas Animation - Optimized with mobile detection
 const canvas = document.getElementById('energyCanvas');
 if (canvas) {
-    const ctx = canvas.getContext('2d', { alpha: true });
-    let animationId;
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    try {
+        const ctx = canvas.getContext('2d', { alpha: true });
+        let animationId;
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
     
     // Set canvas size
     function resizeCanvas() {
@@ -119,16 +209,20 @@ if (canvas) {
         }
     }
     
-    animateEnergy(0);
-    
-    // Pause animation when tab is not visible
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            cancelAnimationFrame(animationId);
-        } else {
-            animateEnergy(0);
-        }
-    });
+        animateEnergy(0);
+        
+        // Pause animation when tab is not visible
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                cancelAnimationFrame(animationId);
+            } else {
+                animateEnergy(0);
+            }
+        });
+    } catch (error) {
+        console.error('Canvas animation error:', error);
+        // Continue without canvas animation
+    }
 }
 
 // Logo rotation effect on click
