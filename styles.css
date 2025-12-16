@@ -24,7 +24,7 @@ body {
 
 /* Skip Link for Accessibility */
 .skip-link {
-    position: absolute;
+    position: fixed;
     top: -40px;
     left: 6px;
     background: var(--purple-primary);
@@ -32,9 +32,10 @@ body {
     padding: 8px 16px;
     text-decoration: none;
     border-radius: 0 0 4px 4px;
-    z-index: 10001;
+    z-index: 10002;
     font-weight: 600;
     transition: top 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .skip-link:focus {

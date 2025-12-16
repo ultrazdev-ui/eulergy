@@ -477,14 +477,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Focus management for mobile menu
-    const menuToggle = document.getElementById('menuToggle');
-    const navLinks = document.getElementById('navLinks');
+    const menuToggleElement = document.getElementById('menuToggle');
+    const navLinksElement = document.getElementById('navLinks');
     
-    if (menuToggle && navLinks) {
-        menuToggle.addEventListener('keydown', (e) => {
+    if (menuToggleElement && navLinksElement) {
+        menuToggleElement.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                menuToggle.click();
+                menuToggleElement.click();
             }
         });
         
@@ -492,8 +492,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    if (navLinks.classList.contains('active')) {
-                        const firstLink = navLinks.querySelector('a');
+                    if (navLinksElement.classList.contains('active')) {
+                        const firstLink = navLinksElement.querySelector('a');
                         if (firstLink) {
                             setTimeout(() => firstLink.focus(), 100);
                         }
@@ -502,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         
-        observer.observe(navLinks, { attributes: true });
+        observer.observe(navLinksElement, { attributes: true });
     }
     
     // Enhanced section animations with intersection observer
@@ -601,14 +601,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         // ESC key closes mobile menu
         if (e.key === 'Escape') {
-            const navLinks = document.getElementById('navLinks');
-            const menuToggle = document.getElementById('menuToggle');
-            if (navLinks && navLinks.classList.contains('active')) {
-                navLinks.classList.remove('active');
-                menuToggle.classList.remove('active');
-                menuToggle.setAttribute('aria-expanded', 'false');
+            const navLinksEsc = document.getElementById('navLinks');
+            const menuToggleEsc = document.getElementById('menuToggle');
+            if (navLinksEsc && navLinksEsc.classList.contains('active')) {
+                navLinksEsc.classList.remove('active');
+                menuToggleEsc.classList.remove('active');
+                menuToggleEsc.setAttribute('aria-expanded', 'false');
                 document.body.style.overflow = '';
-                menuToggle.focus();
+                menuToggleEsc.focus();
             }
         }
         
