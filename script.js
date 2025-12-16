@@ -953,3 +953,375 @@ window.addEventListener('load', () => {
 console.log('%c🚀 Eulergy - Cada idea genera energía', 'color: #00d4ff; font-size: 16px; font-weight: bold;');
 console.log('%c♿ Accessibility Enhanced Version', 'color: #2ecc71; font-size: 12px;');
 console.log('%c✨ Visual Improvements Active', 'color: #2196f3; font-size: 12px;');
+// ===== VISUAL IMPROVEMENTS & INTERACTIVE ELEMENTS =====
+
+// Animated Counter for Statistics
+function animateCounter(element, target, duration = 2000) {
+    const start = 0;
+    const startTime = performance.now();
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const current = Math.floor(start + (target - start) * easeOutQuart);
+        
+        element.textContent = current.toLocaleString();
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.textContent = target.toLocaleString();
+        }
+    }
+    
+    requestAnimationFrame(updateCounter);
+}
+
+// Animate Progress Bars
+function animateProgressBar(element, targetWidth, delay = 0) {
+    setTimeout(() => {
+        element.style.width = targetWidth + '%';
+    }, delay);
+}
+
+// Statistics Animation Observer
+const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const statItem = entry.target;
+            const numberElement = statItem.querySelector('.stat-number');
+            const progressBar = statItem.querySelector('.progress-bar');
+            
+            if (numberElement && !numberElement.classList.contains('animated')) {
+                const target = parseInt(numberElement.getAttribute('data-target'));
+                animateCounter(numberElement, target);
+                numberElement.classList.add('animated');
+            }
+            
+            if (progressBar && !progressBar.classList.contains('animated')) {
+                const progress = parseInt(progressBar.getAttribute('data-progress'));
+                animateProgressBar(progressBar, progress, 500);
+                progressBar.classList.add('animated');
+            }
+        }
+    });
+}, {
+    threshold: 0.3,
+    rootMargin: '0px 0px -100px 0px'
+});
+
+// Observe stat items
+document.querySelectorAll('.stat-item').forEach(item => {
+    statsObserver.observe(item);
+});
+
+// Network Visualization Interactive Effects
+const networkNodes = document.querySelectorAll('.node');
+const connections = document.querySelectorAll('.connection');
+
+networkNodes.forEach(node => {
+    node.addEventListener('mouseenter', () => {
+        // Highlight connections
+        connections.forEach(connection => {
+            connection.style.opacity = '1';
+            connection.style.strokeWidth = '4';
+        });
+        
+        // Add glow effect to other nodes
+        networkNodes.forEach(otherNode => {
+            if (otherNode !== node) {
+                otherNode.style.opacity = '0.6';
+            }
+        });
+    });
+    
+    node.addEventListener('mouseleave', () => {
+        // Reset connections
+        connections.forEach(connection => {
+            connection.style.opacity = '';
+            connection.style.strokeWidth = '';
+        });
+        
+        // Reset other nodes
+        networkNodes.forEach(otherNode => {
+            otherNode.style.opacity = '';
+        });
+    });
+    
+    // Click effect for nodes
+    node.addEventListener('click', () => {
+        if (!prefersReducedMotion) {
+            node.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                node.style.transform = '';
+            }, 300);
+        }
+        
+        // Show tooltip-like information
+        const tooltip = node.getAttribute('data-tooltip');
+        if (tooltip) {
+            showToast(`${tooltip}: Núcleo del ecosistema Eulergy`, 'info', 3000);
+        }
+    });
+});
+
+// Process Flow Animation
+const flowSteps = document.querySelectorAll('.flow-step');
+
+const flowObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const step = entry.target;
+            const stepNumber = parseInt(step.getAttribute('data-step'));
+            
+            // Animate step with delay based on step number
+            setTimeout(() => {
+                step.style.opacity = '1';
+                step.style.transform = 'translateY(0)';
+                
+                // Add pulse effect to icon
+                const icon = step.querySelector('.step-icon');
+                if (icon && !prefersReducedMotion) {
+                    icon.style.animation = 'pulse 0.6s ease';
+                    setTimeout(() => {
+                        icon.style.animation = '';
+                    }, 600);
+                }
+            }, (stepNumber - 1) * 200);
+        }
+    });
+}, {
+    threshold: 0.3
+});
+
+// Initialize flow steps as hidden and observe them
+flowSteps.forEach(step => {
+    step.style.opacity = '0';
+    step.style.transform = 'translateY(30px)';
+    step.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    flowObserver.observe(step);
+});
+
+// Objective Progress Animation
+const objectiveObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const progressIndicator = entry.target.querySelector('.progress-indicator');
+            if (progressIndicator && !progressIndicator.classList.contains('animated')) {
+                const progress = parseInt(progressIndicator.getAttribute('data-progress'));
+                animateProgressBar(progressIndicator, progress, 800);
+                progressIndicator.classList.add('animated');
+            }
+        }
+    });
+}, {
+    threshold: 0.5
+});
+
+document.querySelectorAll('.objective-item').forEach(item => {
+    objectiveObserver.observe(item);
+});
+
+// Timeline Animation
+const timelineObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const timelineItem = entry.target;
+            const progressFill = timelineItem.querySelector('.progress-fill');
+            
+            // Animate timeline item entrance
+            timelineItem.style.opacity = '1';
+            timelineItem.style.transform = 'translateX(0)';
+            
+            // Animate progress fill
+            if (progressFill && !progressFill.classList.contains('animated')) {
+                const currentWidth = progressFill.style.width;
+                progressFill.style.width = '0%';
+                setTimeout(() => {
+                    progressFill.style.width = currentWidth;
+                }, 500);
+                progressFill.classList.add('animated');
+            }
+        }
+    });
+}, {
+    threshold: 0.3
+});
+
+// Initialize timeline items and observe them
+document.querySelectorAll('.timeline-item').forEach((item, index) => {
+    item.style.opacity = '0';
+    item.style.transform = index % 2 === 0 ? 'translateX(-50px)' : 'translateX(50px)';
+    item.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    timelineObserver.observe(item);
+});
+
+// Token Chart Interactive Effects
+const tokenChart = document.getElementById('tokenChart');
+
+if (tokenChart) {
+    // Pause rotation on hover
+    tokenChart.addEventListener('mouseenter', () => {
+        if (!prefersReducedMotion) {
+            tokenChart.style.animationPlayState = 'paused';
+        }
+    });
+    
+    tokenChart.addEventListener('mouseleave', () => {
+        if (!prefersReducedMotion) {
+            tokenChart.style.animationPlayState = 'running';
+        }
+    });
+    
+    // Click to show distribution info
+    tokenChart.addEventListener('click', () => {
+        showToast('Distribución: 70% Comunidad, 20% Desarrollo, 10% Reserva', 'info', 4000);
+    });
+}
+
+// Enhanced Utility Items Interaction
+document.querySelectorAll('.utility-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const text = item.querySelector('span').textContent;
+        showToast(`Utilidad: ${text}`, 'info', 3000);
+        
+        // Add visual feedback
+        if (!prefersReducedMotion) {
+            item.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                item.style.transform = '';
+            }, 200);
+        }
+    });
+});
+
+// Detail Items Hover Effects
+document.querySelectorAll('.detail-item').forEach(item => {
+    item.addEventListener('mouseenter', () => {
+        const value = item.querySelector('.detail-value').textContent;
+        item.setAttribute('data-tooltip', value);
+    });
+});
+
+// Scroll-triggered Animations for Visual Elements
+const visualElementsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+        }
+    });
+}, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+});
+
+// Observe visual elements
+document.querySelectorAll('.infographic-container, .token-visualization, .timeline-container').forEach(element => {
+    element.classList.add('visual-element');
+    visualElementsObserver.observe(element);
+});
+
+// Add CSS for visual element animations
+const visualAnimationStyle = document.createElement('style');
+visualAnimationStyle.textContent = `
+    .visual-element {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .visual-element.animate-in {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+        .visual-element {
+            opacity: 1;
+            transform: none;
+            transition: none;
+        }
+    }
+`;
+document.head.appendChild(visualAnimationStyle);
+
+// Interactive Tooltips for Chart Segments
+document.querySelectorAll('[data-tooltip]').forEach(element => {
+    element.addEventListener('mouseenter', (e) => {
+        const tooltip = e.target.getAttribute('data-tooltip');
+        if (tooltip && !e.target.querySelector('::before')) {
+            // Create temporary tooltip for complex elements
+            const tempTooltip = document.createElement('div');
+            tempTooltip.className = 'temp-tooltip';
+            tempTooltip.textContent = tooltip;
+            tempTooltip.style.cssText = `
+                position: absolute;
+                background: rgba(0, 26, 51, 0.95);
+                color: white;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 12px;
+                z-index: 10000;
+                pointer-events: none;
+                border: 1px solid var(--purple-glow);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            `;
+            
+            document.body.appendChild(tempTooltip);
+            
+            const rect = e.target.getBoundingClientRect();
+            tempTooltip.style.left = rect.left + rect.width / 2 - tempTooltip.offsetWidth / 2 + 'px';
+            tempTooltip.style.top = rect.top - tempTooltip.offsetHeight - 10 + 'px';
+            
+            e.target._tempTooltip = tempTooltip;
+        }
+    });
+    
+    element.addEventListener('mouseleave', (e) => {
+        if (e.target._tempTooltip) {
+            document.body.removeChild(e.target._tempTooltip);
+            delete e.target._tempTooltip;
+        }
+    });
+});
+
+// Performance Optimization: Pause animations when not visible
+const performanceObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        const element = entry.target;
+        if (entry.isIntersecting) {
+            // Resume animations
+            element.style.animationPlayState = 'running';
+        } else {
+            // Pause animations
+            element.style.animationPlayState = 'paused';
+        }
+    });
+});
+
+// Observe animated elements for performance
+document.querySelectorAll('.token-chart, .node, .timeline-marker').forEach(element => {
+    performanceObserver.observe(element);
+});
+
+// Initialize Visual Improvements
+document.addEventListener('DOMContentLoaded', () => {
+    // Add entrance animations to main visual sections
+    const visualSections = document.querySelectorAll('.project-stats, .token-section, .roadmap-section');
+    visualSections.forEach((section, index) => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        section.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        
+        setTimeout(() => {
+            section.style.opacity = '1';
+            section.style.transform = 'translateY(0)';
+        }, 200 * (index + 1));
+    });
+    
+    console.log('%c🎨 Visual Improvements Loaded', 'color: #2ecc71; font-size: 12px;');
+    console.log('%c📊 Interactive Elements Active', 'color: #3498db; font-size: 12px;');
+});
